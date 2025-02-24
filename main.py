@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from models import db, bcrypt, Users, LotteryType
+from forms import RegistrationForm, LoginForm, LotteryChoiceForm
 import os
 
 
@@ -25,3 +26,22 @@ with app.app_context():
 @app.route('/')
 def index():
     return render_template("index.html")
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+
+        user = Users(username=form.username.data, email=form.email.data, password=hashed_password)
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash('Your account has been created! , Now you can enter', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            flash('There was an Error while creating your account !!!', 'danger')
+    return render_template('auth.html', form=form, is_login=False)
