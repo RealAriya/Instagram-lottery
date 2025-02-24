@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="text-center">Choose Lottery Type</h2>
+  <form method="POST" action="{{ url_for('choose_lottery') }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.lottery_type.label }}<br>
+      {{ form.lottery_type(class="form-control") }}
+    </div>
+    <div class="text-center mt-3">
+      {{ form.submit(class="btn btn-primary") }}
+    </div>
+  </form>
+{% endblock content %}
