@@ -61,3 +61,24 @@ def collect_comments(driver, post_url):
         user_data[username]['mention_count'] += int(len(mentions) // 5) 
 
     return user_data 
+
+
+# Collects likes from a specific Instagram post.
+def collect_likes(driver, post_url):
+    # Navigates to the Instagram post.
+    driver.get(post_url)
+
+    # Waits for the likes button to be clickable.
+    likes_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'likes')]")))
+    # Clicks the likes button to open the likes popup.
+    likes_button.click()  
+
+    time.sleep(3)  
+
+    likes = []  
+    like_elements = driver.find_elements(By.XPATH, "//a[contains(@href, '/')]//div[@class='e1e1d']//span")  
+    for element in like_elements:
+        likes.append(element.text)  
+
+    # Returns a list of usernames who liked the post.
+    return likes 
