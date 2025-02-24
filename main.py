@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, flash
 from models import db, bcrypt, Users, LotteryType
 import os
 
@@ -19,3 +19,9 @@ bcrypt.init_app(app)
 # Create database tables
 with app.app_context():
     db.create_all()
+
+
+# Routes
+@app.route('/')
+def index():
+    return render_template("index.html")
