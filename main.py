@@ -1,10 +1,21 @@
 from flask import Flask, render_template, redirect, url_for, request
+from models import db, bcrypt, Users, LotteryType
 import os
 
 
 
-# creat app
+# Connect to lottery database
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:@localhost/lottery"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'your_default_secret_key')
+
+
+# Initialize extensions
+db.init_app(app)
+bcrypt.init_app(app)
+
+
+# Create database tables
+with app.app_context():
+    db.create_all()
