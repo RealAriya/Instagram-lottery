@@ -82,3 +82,26 @@ def collect_likes(driver, post_url):
 
     # Returns a list of usernames who liked the post.
     return likes 
+
+
+# Collects followers of a specific Instagram account.
+def collect_followers(driver, username):
+
+    # Navigates to the Instagram profile.
+    driver.get(f"https://www.instagram.com/{username}/") 
+
+    # Waits for the followers button to be clickable.
+    followers_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, '/followers/')]")))
+    
+    # Clicks the followers button to open the followers popup.
+    followers_button.click()  
+
+    time.sleep(3)  
+
+    followers = []  
+    follower_elements = driver.find_elements(By.XPATH, "//a[contains(@href, '/')]//div[@class='e1e1d']//span")  
+    for element in follower_elements:
+        followers.append(element.text)  
+
+    # Returns a list of followers.
+    return followers
