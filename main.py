@@ -45,3 +45,21 @@ def register():
             db.session.rollback()
             flash('There was an Error while creating your account !!!', 'danger')
     return render_template('auth.html', form=form, is_login=False)
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+
+        # Finds the user in the database based on the email provided in the form.
+        user = Users.query.filter_by(email=form.email.data).first()
+
+        # Verifies the user’s password.
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            flash('You entered successfully!', 'success')
+            return redirect(url_for('choose_lottery'))
+        else:
+            flash('Unsuccessfully !!!, Please check our email and password', 'danger')
+    return render_template('auth.html', form=form, is_login=True)
