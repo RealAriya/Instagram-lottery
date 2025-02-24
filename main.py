@@ -63,3 +63,26 @@ def login():
         else:
             flash('Unsuccessfully !!!, Please check our email and password', 'danger')
     return render_template('auth.html', form=form, is_login=True)
+
+
+
+@app.route('/choose_lottery', methods=['GET', 'POST'])
+def choose_lottery():
+    form = LotteryChoiceForm()
+
+    if form.validate_on_submit():
+
+        chosen_type = form.lottery_type.data
+        lottery_type = LotteryType(name=chosen_type)
+
+        try:
+            db.session.add(lottery_type)
+            db.session.commit()
+            flash(f'You have chosen: {chosen_type}', 'success')
+            return redirect(url_for('start_lottery', lottery_type=chosen_type))
+        
+        except Exception as e:
+            db.session.rollback()
+            flash('There was an Error while choosing lottery type', 'danger') 
+
+    return render_template('choose_lottery.html', form=form)
