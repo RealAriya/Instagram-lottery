@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="text-center">The winner is {{ winner }}</h1>
+  <div class="text-center">
+    <a href="{{ url_for('download_excel') }}" class="btn btn-success">Download Excel File</a>
+  </div>
+{% endblock content %}

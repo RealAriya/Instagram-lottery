@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="text-center">Payment Callback</h2>
+  {% if payment_status == 'success' %}
+    <div class="alert alert-success">Payment successful! The lottery will now proceed.</div>
+  {% else %}
+    <div class="alert alert-danger">Payment failed. Please try again.</div>
+  {% endif %}
+  <div class="text-center">
+    <a href="{{ url_for('start_lottery') }}" class="btn btn-primary">Return to Lottery</a>
+  </div>
+{% endblock content %}
