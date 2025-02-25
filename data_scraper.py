@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+load_dotenv('.envv')
 
 # Instagram credentials
 username = os.getenv("INSTAGRAM_USERNAME")

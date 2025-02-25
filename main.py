@@ -8,15 +8,25 @@ from selenium.webdriver.chrome.service import Service
 import random
 from payment import process_payment
 from excel_generator import generate_excel
+from dotenv import load_dotenv
+from flask import send_file
 
 
+# Load environment variables
+load_dotenv('.envv')
+
+# Access environment variables
+SECRET_KEY = os.getenv("SECRET_KEY")
+DATABASE_URI = os.getenv("DATABASE_URI")
+INSTAGRAM_USERNAME = os.getenv("INSTAGRAM_USERNAME")
+INSTAGRAM_PASSWORD = os.getenv("INSTAGRAM_PASSWORD")
+CHROMEDRIVER_PATH = os.getenv("CHROMEDRIVER_PATH")
 
 # Connect to lottery database
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:@localhost/lottery"
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'your_default_secret_key')
-
+app.config["SECRET_KEY"] = SECRET_KEY
 
 # Initialize extensions
 db.init_app(app)
@@ -104,7 +114,7 @@ def start_lottery(lottery_type):
         min_mentions = form.min_mentions.data
 
         # Initialize ChromeDriver
-        service = Service('/usr/bin/chromedriver')  
+        service = Service(CHROMEDRIVER_PATH)  
         driver = webdriver.Chrome(service=service)
         login(driver)
 
@@ -154,3 +164,14 @@ def payment_callback():
     else:
         flash('Payment failed. Please try again.', 'danger')
         return redirect(url_for('start_lottery'))
+    
+
+
+@app.route('/download_excel')
+def download_excel():
+    return send_file('participants.xlsx', as_attachment=True)
+
+
+# Run the app
+if __name__ == "__main__":
+    app.run(debug=True)
