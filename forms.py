@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField , SelectField
+from wtforms import StringField, PasswordField, SubmitField , SelectField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 
@@ -28,4 +28,6 @@ class LotteryChoiceForm(FlaskForm):
         ('score', 'Lottery by Score'),
         ('followers', 'Lottery by Followers')
     ])
+    min_comments = IntegerField('Minimum Comments', default=0)
+    min_mentions = IntegerField('Minimum Mentions', default=0)
     submit = SubmitField('Proceed')
