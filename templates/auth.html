@@ -5,8 +5,13 @@
 {% block content %}
   <div class="container">
     <h2 class="text-center">{% if is_login %}Login{% else %}Register{% endif %}</h2>
-    <form method="POST">
+    <form method="POST" action="{{ url_for('login') if is_login else url_for('register') }}">
       {{ form.hidden_tag() }}
+      {% if not is_login %}
+        <div class="form-group">
+          {{ form.username.label }} {{ form.username(class="form-control") }}
+        </div>
+      {% endif %}
       <div class="form-group">
         {{ form.email.label }} {{ form.email(class="form-control") }}
       </div>
