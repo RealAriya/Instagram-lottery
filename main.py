@@ -144,3 +144,13 @@ def start_lottery(lottery_type):
     return render_template('lottery.html', form=form, lottery_type=lottery_type)
 
 
+@app.route('/payment_callback')
+def payment_callback():
+    # Verify payment success
+    payment_status = request.args.get('status')
+    if payment_status == 'success':
+        flash('Payment successful! The lottery will now proceed.', 'success')
+        return redirect(url_for('lottery_result'))
+    else:
+        flash('Payment failed. Please try again.', 'danger')
+        return redirect(url_for('start_lottery'))
