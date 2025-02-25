@@ -58,7 +58,8 @@ def collect_comments(driver, post_url):
         user_data[username]['comment_count'] += 1
 
         mentions = [word[1:] for word in comment_text.split() if word.startswith('@')]  
-        user_data[username]['mention_count'] += int(len(mentions) // 5) 
+        # 1 mention = 1 point
+        user_data[username]['mention_count'] += len(mentions)
 
     return user_data 
 
