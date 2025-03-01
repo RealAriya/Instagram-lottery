@@ -5,8 +5,7 @@
   <form method="POST" action="{{ url_for('start_lottery', lottery_type=lottery_type) }}">
     {{ form.hidden_tag() }}
     <div class="form-group">
-      <label for="post_url">Instagram Post URL:</label>
-      <input type="url" class="form-control" id="post_url" name="post_url" required>
+      {{ form.post_url.label }} {{ form.post_url(class="form-control") }}
     </div>
     <div class="form-group">
       {{ form.min_comments.label }} {{ form.min_comments(class="form-control") }}

@@ -27,7 +27,13 @@ class LotteryChoiceForm(FlaskForm):
         ('likes', 'Lottery by Likes'),
         ('score', 'Lottery by Score'),
         ('followers', 'Lottery by Followers')
-    ])
-    min_comments = IntegerField('Minimum Comments', default=0)
-    min_mentions = IntegerField('Minimum Mentions', default=0)
+    ],validators=[DataRequired()])
+    
     submit = SubmitField('Proceed')
+
+
+class StartLotteryForm(FlaskForm):
+    post_url = StringField('Instagram Post URL', validators=[DataRequired()])
+    min_comments = IntegerField('Minimum Comments', default=0, validators=[DataRequired()])
+    min_mentions = IntegerField('Minimum Mentions', default=0, validators=[DataRequired()])
+    submit = SubmitField('Run Lottery')

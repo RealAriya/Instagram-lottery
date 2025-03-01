@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from models import db, bcrypt, Users, LotteryType
-from forms import RegistrationForm, LoginForm, LotteryChoiceForm
+from forms import RegistrationForm, LoginForm, LotteryChoiceForm, StartLotteryForm
 from data_scraper import login, collect_comments, collect_likes, collect_followers
 import os
 from selenium import webdriver
@@ -56,7 +56,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             flash('Your account has been created! , Now you can enter', 'success')
-            return redirect(url_for('login'))
+            return redirect(url_for('user_login'))
         except Exception as e:
             db.session.rollback()
             flash('There was an Error while creating your account !!!', 'danger')
@@ -64,7 +64,7 @@ def register():
 
 
 @app.route("/login", methods=['GET', 'POST'])
-def login():
+def user_login():
     
     form = LoginForm()
     if form.validate_on_submit():
@@ -85,21 +85,15 @@ def login():
 @app.route('/choose_lottery', methods=['GET', 'POST'])
 def choose_lottery():
     form = LotteryChoiceForm()
+    print("Form submitted:", form.validate_on_submit())  # Debug: Check if form is valid
 
     if form.validate_on_submit():
-
+        print("Form data:", form.data)  # Debug: Print form data
         chosen_type = form.lottery_type.data
-        lottery_type = LotteryType(name=chosen_type)
-
-        try:
-            db.session.add(lottery_type)
-            db.session.commit()
-            flash(f'You have chosen: {chosen_type}', 'success')
-            return redirect(url_for('start_lottery', lottery_type=chosen_type))
-        
-        except Exception as e:
-            db.session.rollback()
-            flash('There was an Error while choosing lottery type', 'danger') 
+        flash(f'You have chosen: {chosen_type}', 'success')
+        return redirect(url_for('start_lottery', lottery_type=chosen_type))
+    else:
+        print("Form errors:", form.errors)  # Debug: Print form errors
 
     return render_template('choose_lottery.html', form=form)
 
@@ -107,9 +101,12 @@ def choose_lottery():
 
 @app.route('/start_lottery/<lottery_type>', methods=['GET', 'POST'])
 def start_lottery(lottery_type):
-    form = LotteryChoiceForm()
+    form = StartLotteryForm()
+    print("Form submitted:", form.validate_on_submit())  # Debug: Check if form is valid
+
     if form.validate_on_submit():
-        post_url = request.form['post_url']
+        print("Form data:", form.data)  # Debug: Print form data
+        post_url = form.post_url.data
         min_comments = form.min_comments.data
         min_mentions = form.min_mentions.data
 
@@ -150,6 +147,8 @@ def start_lottery(lottery_type):
         # Select a winner
         winner = random.choice(participants)
         return redirect(url_for('lottery_result', winner=winner))
+    else:
+        print("Form errors:", form.errors)  # Debug: Print form errors
 
     return render_template('lottery.html', form=form, lottery_type=lottery_type)
 
