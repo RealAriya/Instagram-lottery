@@ -109,6 +109,7 @@ def start_lottery(lottery_type):
         post_url = form.post_url.data
         min_comments = form.min_comments.data
         min_mentions = form.min_mentions.data
+        min_score = form.min_score.data
 
         # Initialize ChromeDriver
         service = Service(CHROMEDRIVER_PATH)  
@@ -127,8 +128,15 @@ def start_lottery(lottery_type):
             likes = collect_likes(driver, post_url)
             participants.extend(likes)
         if 'followers' in lottery_type:
-            followers = collect_followers(driver, post_url)
+            username = post_url.split('/')[3]
+            followers = collect_followers(driver, username)
             participants.extend(followers)
+        if 'score' in lottery_type:
+            comments_data = collect_comments(driver, post_url)
+            scored_users = {u: d['comment_count'] + d['mention_count'] 
+                           for u, d in comments_data.items()}
+            filtered = [u for u, s in scored_users.items() if s >= min_score]
+            participants.extend(filtered)
 
         driver.quit()
 

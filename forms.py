@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField , SelectField, IntegerField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
 
 
 # Sign up
@@ -34,6 +34,30 @@ class LotteryChoiceForm(FlaskForm):
 
 class StartLotteryForm(FlaskForm):
     post_url = StringField('Instagram Post URL', validators=[DataRequired()])
-    min_comments = IntegerField('Minimum Comments', default=0, validators=[DataRequired()])
-    min_mentions = IntegerField('Minimum Mentions', default=0, validators=[DataRequired()])
+    min_comments = IntegerField('Minimum Comments', default=0, validators=[Optional()])  
+    min_mentions = IntegerField('Minimum Mentions', default=0, validators=[Optional()])  
+    min_score = IntegerField('Minimum Score', default=5, validators=[Optional()])  
     submit = SubmitField('Run Lottery')
+
+    def validate(self, **kwargs):
+        
+        if not super().validate(**kwargs):
+            return False
+
+        # Get lottery type 
+        from flask import request
+        lottery_type = request.view_args.get('lottery_type')
+
+        # Conditional 
+        if lottery_type in ['comments', 'score']:
+            if not self.min_comments.data or self.min_comments.data < 0:
+                self.min_comments.errors.append("Minimum comments required for this lottery type")
+                return False
+            if not self.min_mentions.data or self.min_mentions.data < 0:
+                self.min_mentions.errors.append("Minimum mentions required for this lottery type")
+                return False
+            if lottery_type == 'score' and (not self.min_score.data or self.min_score.data < 0):
+                self.min_score.errors.append("Minimum score required for score-based lottery")
+                return False
+
+        return True
